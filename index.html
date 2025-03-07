@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Romantic Daily Planner 💖</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1>A good day ahead! 🌞</h1>
+    
+    <p class="subtitle">Plan your day with love! 💖</p>
+
+    <div class="name-input">
+        <label for="userName">Your Name:</label>
+        <input type="text" id="userName" placeholder="Enter your name" oninput="saveName()">
+    </div>
+
+    <div class="time-slot">
+        <label>Morning:</label>
+        <input type="text" id="task-morning">
+        <button onclick="generateQuest('task-morning')">❤️</button>
+    </div>
+
+    <div class="time-slot">
+        <label>Lunch:</label>
+        <input type="text" id="task-lunch">
+        <button onclick="generateQuest('task-lunch')">❤️</button>
+    </div>
+
+    <div class="time-slot">
+        <label>Evening:</label>
+        <input type="text" id="task-evening">
+        <button onclick="generateQuest('task-evening')">❤️</button>
+    </div>
+
+    <div class="time-slot">
+        <label>Night:</label>
+        <input type="text" id="task-night">
+        <button onclick="generateQuest('task-night')">❤️</button>
+    </div>
+
+    <button class="show-list-btn" onclick="showToDoList()">View To-Do List</button>
+
+    <div id="todo-list-container" class="hidden">
+        <h2>Today's To-Do List:</h2>
+        <ul id="todo-list"></ul>
+    </div>
+
+    <div class="calendar-nav">
+        <button onclick="changeMonth(-1)">◀️ Previous</button>
+        <h2 id="calendar-header">📅 Calendar</h2>
+        <button onclick="changeMonth(1)">Next ▶️</button>
+    </div>
+    <div id="calendar-container"></div>
+
+    <p id="end-message" class="hidden"></p>
+</div>
+  <!-- Add this to your HTML to include the menu buttons -->
+<div class="menu-buttons">
+    <button class="menu-button open-popup-btn" data-popup="help">
+        <span>❔</span> Help
+    </button>
+    <button class="menu-button open-popup-btn" data-popup="achievement">
+        <span>🏆</span> Achievements
+    </button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

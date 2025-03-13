@@ -6,60 +6,188 @@
     <title>Romantic Daily Planner 💖</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Additional styles for new features */
+        .congratulations-popup {
+            text-align: center;
+        }
+        
+        .bonus-points {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            padding: 10px;
+            border-radius: 15px;
+            margin: 15px auto;
+            display: inline-block;
+        }
+        
+        .bonus-badge {
+            background-color: #ff6b6b;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .bonus-amount {
+            font-weight: bold;
+            color: #444;
+        }
+        
+        .points-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #a34fc9;
+            margin: 10px 0;
+        }
+        
+        .points-animation {
+            font-size: 2em;
+            font-weight: bold;
+            color: #ff6b81;
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .celebration-container {
+            position: relative;
+            height: 100px;
+            margin-top: 20px;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: confetti-fall 3s linear infinite;
+        }
+        
+        .confetti:nth-child(1) {
+            background-color: #ff6b81;
+            left: 20%;
+            animation-delay: 0.2s;
+        }
+        
+        .confetti:nth-child(2) {
+            background-color: #5f27cd;
+            left: 40%;
+            animation-delay: 0.5s;
+        }
+        
+        .confetti:nth-child(3) {
+            background-color: #ffda79;
+            left: 60%;
+            animation-delay: 0.8s;
+        }
+        
+        .confetti:nth-child(4) {
+            background-color: #54a0ff;
+            left: 80%;
+            animation-delay: 1.1s;
+        }
+        
+        .confetti:nth-child(5) {
+            background-color: #1dd1a1;
+            left: 30%;
+            animation-delay: 1.4s;
+        }
+        
+        .trophy {
+            font-size: 3em;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            animation: trophy-bounce 1s ease-in-out infinite;
+        }
+        
+        .level-indicator {
+            margin-top: 15px;
+            padding: 8px;
+            background: linear-gradient(45deg, #a18cd1, #fbc2eb);
+            border-radius: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .level-value {
+            color: #4a266a;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes trophy-bounce {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            50% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
 </head>
 <body>
-
 <div class="container">
     <h1>A good day ahead! 🌞</h1>
     
     <p class="subtitle">Plan your day with love! 💖</p>
-
     <div class="name-input">
         <label for="userName">Your Name:</label>
         <input type="text" id="userName" placeholder="Enter your name" oninput="saveName()">
     </div>
-
     <div class="time-slot">
         <label>Morning:</label>
         <input type="text" id="task-morning">
         <button onclick="generateQuest('task-morning')">❤️</button>
     </div>
-
     <div class="time-slot">
         <label>Lunch:</label>
         <input type="text" id="task-lunch">
         <button onclick="generateQuest('task-lunch')">❤️</button>
     </div>
-
     <div class="time-slot">
         <label>Evening:</label>
         <input type="text" id="task-evening">
         <button onclick="generateQuest('task-evening')">❤️</button>
     </div>
-
     <div class="time-slot">
         <label>Night:</label>
         <input type="text" id="task-night">
         <button onclick="generateQuest('task-night')">❤️</button>
     </div>
-
     <button class="show-list-btn" onclick="showToDoList()">View To-Do List</button>
-
     <div id="todo-list-container" class="hidden">
         <h2>Today's To-Do List:</h2>
         <ul id="todo-list"></ul>
     </div>
-
     <div class="calendar-nav">
         <button onclick="changeMonth(-1)">◀️ Previous</button>
         <h2 id="calendar-header">📅 Calendar</h2>
         <button onclick="changeMonth(1)">Next ▶️</button>
     </div>
     <div id="calendar-container"></div>
-
     <p id="end-message" class="hidden"></p>
 </div>
-  <!-- Add this to your HTML to include the menu buttons -->
+<!-- Add this to your HTML to include the menu buttons -->
 <div class="menu-buttons">
     <button class="menu-button open-popup-btn" data-popup="help">
         <span>❔</span> Help
@@ -68,7 +196,6 @@
         <span>🏆</span> Achievements
     </button>
 </div>
-
 <script src="script.js"></script>
 </body>
 </html>

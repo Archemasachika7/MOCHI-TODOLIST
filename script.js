@@ -119,8 +119,10 @@ function confirmCompletion(checkbox, task) {
             // Add event listeners to the confirmation buttons
             document.querySelector('.confirm-yes').addEventListener('click', function() {
                 checkbox.checked = true;
+                addCompletedTask();
                 giveDailyQuest();
                 markCalendar();
+                checkAllTasksCompleted();
                 closePopup('confirm-task');
             });
             
@@ -129,6 +131,74 @@ function confirmCompletion(checkbox, task) {
                 closePopup('confirm-task');
             });
         });
+}
+
+// Function to add completed task count and points
+function addCompletedTask() {
+    let completedTasks = parseInt(localStorage.getItem('completedTasksCount') || '0');
+    completedTasks++;
+    localStorage.setItem('completedTasksCount', completedTasks);
+    
+    let points = parseInt(localStorage.getItem('points') || '0');
+    points += 10;
+    localStorage.setItem('points', points);
+    
+    // Show points earned popup
+    showCutePopup("points-earned", "Points Earned! ✨", 
+        `<div class="popup-message">
+            <p>You earned 10 points!</p>
+            <p class="points-total">Total Points: ${points}</p>
+            <div class="points-animation">+10</div>
+        </div>`);
+}
+
+// Function to check if all tasks for today are completed
+function checkAllTasksCompleted() {
+    let totalTasks = 0;
+    let completedTasks = 0;
+    
+    document.querySelectorAll(".time-slot input").forEach(input => {
+        if (input.value) {
+            totalTasks++;
+        }
+    });
+    
+    document.querySelectorAll("#todo-list input[type='checkbox']").forEach(checkbox => {
+        if (checkbox.checked) {
+            completedTasks++;
+        }
+    });
+    
+    if (totalTasks > 0 && completedTasks === totalTasks) {
+        showCongratulationsPopup();
+    }
+}
+
+// Function to show congratulations popup
+function showCongratulationsPopup() {
+    let points = parseInt(localStorage.getItem('points') || '0');
+    let bonusPoints = 20;
+    points += bonusPoints;
+    localStorage.setItem('points', points);
+    
+    showCutePopup("congratulations", "✨ All Tasks Completed! ✨", 
+        `<div class="popup-message congratulations-popup">
+            <h3>Amazing Job, ${userName || 'Sweetie'}! 🎉</h3>
+            <p>You've completed all your tasks for today!</p>
+            <div class="bonus-points">
+                <span class="bonus-badge">BONUS</span>
+                <span class="bonus-amount">+${bonusPoints} points</span>
+            </div>
+            <p class="points-total">Total Points: ${points}</p>
+            <div class="celebration-container">
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="confetti"></div>
+                <div class="trophy">🏆</div>
+            </div>
+        </div>`);
 }
 
 function giveDailyQuest() {
@@ -151,12 +221,33 @@ function markCalendar() {
     localStorage.setItem(`completed-${todayDate}-${today.getMonth()}-${today.getFullYear()}`, "true");
     generateCalendar();
     
+    // Increment streak count
+    updateStreak();
+    
     // Show celebration popup
     showCutePopup("calendar-marked", "Yay! Day Completed! 🎉", 
         `<div class="popup-message">
             <p>You're doing amazing! Keep up the great work!</p>
             <div class="celebration-animation"></div>
         </div>`);
+}
+
+// Function to update streak count
+function updateStreak() {
+    let today = new Date();
+    let yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    let yesterdayCompleted = localStorage.getItem(`completed-${yesterday.getDate()}-${yesterday.getMonth()}-${yesterday.getFullYear()}`);
+    
+    if (yesterdayCompleted === "true") {
+        let streak = parseInt(localStorage.getItem('streakCount') || '0');
+        streak++;
+        localStorage.setItem('streakCount', streak);
+    } else {
+        // Reset streak if yesterday was not completed
+        localStorage.setItem('streakCount', '1');
+    }
 }
 
 function changeMonth(direction) {
@@ -265,7 +356,7 @@ function showCutePopup(id, title, content, callback) {
     }
     
     // Auto-close non-confirmation popups after 3 seconds
-    if (id !== 'confirm-task' && id !== 'welcome') {
+    if (id !== 'confirm-task' && id !== 'welcome' && id !== 'congratulations') {
         setTimeout(() => {
             closePopup(id);
         }, 3000);
@@ -324,9 +415,10 @@ function openPopup(popupId) {
                     <ul class="cute-list">
                         <li>💖 Add your name to personalize your experience</li>
                         <li>🌸 Create tasks for different times of day</li>
-                        <li>✨ Check off tasks when completed</li>
+                        <li>✨ Check off tasks when completed (10 points each!)</li>
                         <li>🌟 Track your progress on the calendar</li>
                         <li>💕 Earn daily quests for completing tasks</li>
+                        <li>🏆 Complete all tasks for bonus points!</li>
                     </ul>
                 </div>`);
             break;
@@ -343,6 +435,14 @@ function openPopup(popupId) {
                             <span class="stat-number">${getStreakCount()}</span>
                             <span class="stat-label">Day Streak</span>
                         </div>
+                        <div class="stat">
+                            <span class="stat-number">${getPoints()}</span>
+                            <span class="stat-label">Total Points</span>
+                        </div>
+                    </div>
+                    <div class="level-indicator">
+                        <span class="level-label">Level: </span>
+                        <span class="level-value">${calculateLevel()}</span>
                     </div>
                 </div>`);
             break;
@@ -351,11 +451,27 @@ function openPopup(popupId) {
 
 // Helper functions for stats
 function getCompletedTasksCount() {
-    // This is a placeholder - implement actual logic based on your storage
-    return localStorage.getItem('completedTasksCount') || 0;
+    return parseInt(localStorage.getItem('completedTasksCount') || '0');
 }
 
 function getStreakCount() {
-    // This is a placeholder - implement actual streak logic
-    return localStorage.getItem('streakCount') || 0;
+    return parseInt(localStorage.getItem('streakCount') || '0');
+}
+
+function getPoints() {
+    return parseInt(localStorage.getItem('points') || '0');
+}
+
+function calculateLevel() {
+    const points = getPoints();
+    const level = Math.floor(points / 100) + 1;
+    
+    // Get level name based on points
+    const levelNames = [
+        "Planner Newbie", "Task Achiever", "Productivity Star", 
+        "Organization Wizard", "Planning Master", "Efficiency Champion"
+    ];
+    
+    const levelIndex = Math.min(Math.floor(level / 2), levelNames.length - 1);
+    return `${level} - ${levelNames[levelIndex]}`;
 }
